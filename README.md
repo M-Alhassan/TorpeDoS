@@ -22,21 +22,21 @@ To execute an attack, run the TorpeDoS script as a super user (sudo) and follow 
 
 1. **HTTP Flood Attack:** Launches a flood of HTTP requests to overwhelm the target web server. It supports HTTP methods such as GET, POST, and CONNECT.
 <br>
-![HTTPFlood](img/httpf.png)
+ ![HTTPFlood](img/httpf.png)
 
 2. **TCP SYN Flood Attack:** Floods the target with a large number of TCP connection requests, exhausting server resources.
 <br>
-![TCPSYNFlood](img/tcpsf.png)
+ ![TCPSYNFlood](img/tcpsf.png)
 
 ## Installation
 
 1. Clone the repository:
 <br>
-``` git clone https://github.com/M-Alhassan/TorpeDoS.git ```
+ ``` git clone https://github.com/M-Alhassan/TorpeDoS.git ```
 
 2. Install the required dependencies:
 <br>
-``` pip install scapy colorama termcolor pyfiglet ```
+ ``` pip install scapy colorama termcolor pyfiglet ```
 
 
 ## Author
