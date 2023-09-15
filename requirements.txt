@@ -1,0 +1,4 @@
+scapy==2.5.0
+colorama==0.4.6
+termcolor==2.5.0
+pyfiglet==0.8.post0
