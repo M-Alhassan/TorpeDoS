@@ -18,7 +18,12 @@ TorpeDoS is a Denial of Service (DoS) tool developed in Python for testing purpo
 
 ## Usage
 
-To execute an attack, run the TorpeDoS script as a super user (sudo) and follow the prompts. The tool currently supports the following types of DoS attacks:
+To execute an attack, run the TorpeDoS script as a super user (sudo) and follow the prompts.
+
+``` sudo python torpedos.py ```
+
+
+The tool currently supports the following types of DoS attacks:
 
 1. **HTTP Flood Attack:** Launches a flood of HTTP requests to overwhelm the target web server. It supports HTTP methods such as GET, POST, and CONNECT.
  ![HTTPFlood](img/httpf.png)
