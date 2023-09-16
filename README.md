@@ -8,6 +8,10 @@
 
 TorpeDoS is a Denial of Service (DoS) tool developed in Python for testing purposes. It is designed to flood a target server with a high volume of requests, thereby overwhelming its resources. This tool should only be used with proper authorization and for responsible testing purposes.
 
+## Version
+
+1.0.0
+
 ## Prerequisites
 
 - Python 3.x
