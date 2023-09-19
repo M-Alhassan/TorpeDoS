@@ -10,7 +10,10 @@ TorpeDoS is a Denial of Service (DoS) tool developed in Python for testing purpo
 
 ## Version
 
-1.1.0
+<b>1.2.0</b>
+
+- <b>New:</b> added HTTP Directory Traversal Attack
+- <b>Change:</b> updated the main menu prompt.
 
 ## Prerequisites
 
