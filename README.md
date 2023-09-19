@@ -46,6 +46,10 @@ The tool currently supports the following types of DoS attacks:
 
 2. Install the required dependencies:
 
+    ``` pip install -r requirements.txt ```
+
+    or
+    
     ``` pip install scapy colorama termcolor pyfiglet ```
 
 
